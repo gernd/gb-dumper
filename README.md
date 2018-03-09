@@ -1,4 +1,4 @@
-# gb-dumper
+# gb-dumper [![Build Status](https://travis-ci.org/gernd/gb-dumper.svg?branch=master)](https://travis-ci.org/gernd/gb-dumper)
 
 FIXME: description
 
