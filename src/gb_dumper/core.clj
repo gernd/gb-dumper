@@ -2,7 +2,7 @@
   (:gen-class))
 
 (require '(clojure.java [io :as io]))
-(require '(gb-dumper.analyze))
+(use 'gb-dumper.analyze)
 
 (defn print-usage
   "Prints usage information on howto use the GB ROM Analyzer"
@@ -24,5 +24,6 @@
     (print-usage)
     (let [file-name (first args)]
       (do (println "Analyzing GB Rom File " file-name)
-          (let [rom-binary-data (read-rom file-name)]
-            )))))
+          (let [rom-binary-data (read-rom file-name)
+                unpacked-rom-data (unpack-rom-data rom-binary-data)]
+            (println unpacked-rom-data))))))
