@@ -1,4 +1,4 @@
-(ns gb-dumper.core-test
+(ns gb-dumper.anaylze-test
   (:require [clojure.test :refer :all]
             [gb-dumper.analyze :refer :all])
   (:import (java.nio ByteBuffer)))
