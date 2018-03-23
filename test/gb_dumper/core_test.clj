@@ -16,13 +16,8 @@
     buf))
 
 (deftest test-read-$00-address
-  (testing "Checks that the restart $00 adress is correctly read from the ROM"
+  (testing "Checks that the restart adresses are correctly read from the ROM"
     (let [test-rom-data (prepare-test-data)]
-      (do (println "Test ROM data is " (to-hex-string test-rom-data))
-          (is (= 0x12 (get (unpack-rom-data test-rom-data) :rst$00)))))))
-
-(deftest test-read-$08-address
-  (testing "Checks that the restart $08 adress is correctly read from the ROM"
-    (let [test-rom-data (prepare-test-data)]
-      (do (println "Test ROM data is " (to-hex-string test-rom-data))
-          (is (= 0x33 (get (unpack-rom-data test-rom-data) :rst$08)))))))
+      (do (println "Test ROM data is" (to-hex-string test-rom-data))
+          (is (= 0x12 (get (unpack-rom-data test-rom-data) :rst$00))
+          (is (= 0x33 (get (unpack-rom-data test-rom-data) :rst$08))))))))
