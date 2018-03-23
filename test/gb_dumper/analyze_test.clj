@@ -17,21 +17,26 @@
     (.put byte-buffer (.byteValue 0x13))                    ; rst$20
     (.put byte-buffer (.byteValue 0x03))                    ; rst$28
     (.put byte-buffer (.byteValue 0x24))                    ; rst$30
-    (.put byte-buffer (.byteValue 0x42))                    ; rst$38
+    (.put byte-buffer (.byteValue 0x99))                    ; rst$38
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
+
+(defn is-same-byte
+  "Checks that the byte value of two expressions is the same"
+  [first-byte second-byte]
+  (is (= (.byteValue first-byte) (.byteValue second-byte))))
 
 (deftest test-unpack-rom-data-restart-addresses-correct
   (testing "Checks that the restart adresses are correctly read from the ROM"
     (let [test-rom-data (prepare-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data))
-          (is (= 0x12 (get unpacked-rom-data :rst$00)))
-          (is (= 0x33 (get unpacked-rom-data :rst$08)))
-          (is (= 0x00 (get unpacked-rom-data :rst$10)))
-          (is (= 0x12 (get unpacked-rom-data :rst$18)))
-          (is (= 0x13 (get unpacked-rom-data :rst$20)))
-          (is (= 0x03 (get unpacked-rom-data :rst$28)))
-          (is (= 0x24 (get unpacked-rom-data :rst$30)))
-          (is (= 0x42 (get unpacked-rom-data :rst$38)))))))
+          (is-same-byte 0x12 (get unpacked-rom-data :rst$00))
+          (is-same-byte 0x33 (get unpacked-rom-data :rst$08))
+          (is-same-byte 0x00 (get unpacked-rom-data :rst$10))
+          (is-same-byte 0x12 (get unpacked-rom-data :rst$18))
+          (is-same-byte 0x13 (get unpacked-rom-data :rst$20))
+          (is-same-byte 0x03 (get unpacked-rom-data :rst$28))
+          (is-same-byte 0x24 (get unpacked-rom-data :rst$30))
+          (is-same-byte 0x99 (get unpacked-rom-data :rst$38))))))
