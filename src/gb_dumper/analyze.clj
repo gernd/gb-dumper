@@ -6,6 +6,13 @@
   [bytes]
   (apply str "0x" (for [byte bytes] (format "%02x" byte))))
 
+(defn unpack-start-opcodes
+  "unpacks the start opcodes from the ROM given as ByteBuffer"
+  [rom-data-buffer]
+  (let [byte-arr (byte-array 4)]
+    (.get rom-data-buffer byte-arr)
+    (vec byte-arr)))
+
 (defn unpack-rom-data
   "unpacks the gb rom data given as byte array"
   [rom-data]
@@ -28,6 +35,8 @@
           timer-overflow-interrupt (.get byte-buffer)
           serial-transfer-completion-interrupt (.get byte-buffer)
           high-to-low-interrupt (.get byte-buffer)
+          ; code execution start opcodes
+          code-execution-start-opcodes (unpack-start-opcodes byte-buffer)
           ]
       {
        :rst$00                               rst$00
@@ -43,4 +52,5 @@
        :timer-overflow-interrupt             timer-overflow-interrupt
        :serial-transfer-completion-interrupt serial-transfer-completion-interrupt
        :high-to-low-interrupt                high-to-low-interrupt
+       :start-opcodes                        code-execution-start-opcodes
        })))

@@ -7,7 +7,7 @@
 (defn prepare-test-data
   "Prepares test ROM data and returns it as byte[]"
   []
-  (let [test-rom-size 13
+  (let [test-rom-size 17
         byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
     (.put byte-buffer (.byteValue 0x12))                    ; rst$00
@@ -23,6 +23,10 @@
     (.put byte-buffer (.byteValue 0x03))                    ; timer overflow interrupt
     (.put byte-buffer (.byteValue 0x04))                    ; serial transfer complete interrupt
     (.put byte-buffer (.byteValue 0x05))                    ; high to low interrupt
+    (.put byte-buffer (.byteValue 0x12))                    ; code execution point (4 bytes)
+    (.put byte-buffer (.byteValue 0x13))                    ; code execution point (4 bytes)
+    (.put byte-buffer (.byteValue 0x21))                    ; code execution point (4 bytes)
+    (.put byte-buffer (.byteValue 0x70))                    ; code execution point (4 bytes)
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
@@ -56,3 +60,13 @@
           (is-same-byte 0x03 (get unpacked-rom-data :timer-overflow-interrupt))
           (is-same-byte 0x04 (get unpacked-rom-data :serial-transfer-completion-interrupt))
           (is-same-byte 0x05 (get unpacked-rom-data :high-to-low-interrupt))))))
+
+(deftest test-unpack-rom-data-start-opcodes-correct
+  (testing "Checks that the start opcodes are correctly read from the ROM"
+    (let [test-rom-data (prepare-test-data)
+          unpacked-rom-data (unpack-rom-data test-rom-data)]
+      (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
+          (is-same-byte 0x12 (nth (get unpacked-rom-data :start-opcodes) 0))
+          (is-same-byte 0x13 (nth (get unpacked-rom-data :start-opcodes) 1))
+          (is-same-byte 0x21 (nth (get unpacked-rom-data :start-opcodes) 2))
+          (is-same-byte 0x70 (nth (get unpacked-rom-data :start-opcodes) 3))))))
