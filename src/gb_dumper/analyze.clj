@@ -13,6 +13,14 @@
     (.get rom-data-buffer byte-arr)
     (vec byte-arr)))
 
+(defn unpack-logo-graphic
+  "unpacks the start logo graphic from the ROM given as ByteBuffer"
+  [rom-data-buffer]
+  (let [byte-arr (byte-array 48)]
+    (.get rom-data-buffer byte-arr)
+    (vec byte-arr)))
+
+
 (defn unpack-rom-data
   "unpacks the gb rom data given as byte array"
   [rom-data]
@@ -37,6 +45,8 @@
           high-to-low-interrupt (.get byte-buffer)
           ; code execution start opcodes
           code-execution-start-opcodes (unpack-start-opcodes byte-buffer)
+          ; scrolling start logo
+          start-logo (unpack-logo-graphic byte-buffer)
           ]
       {
        :rst$00                               rst$00
@@ -53,4 +63,5 @@
        :serial-transfer-completion-interrupt serial-transfer-completion-interrupt
        :high-to-low-interrupt                high-to-low-interrupt
        :start-opcodes                        code-execution-start-opcodes
+       :logo                                 start-logo
        })))

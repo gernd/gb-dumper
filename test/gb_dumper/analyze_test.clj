@@ -3,11 +3,18 @@
             [gb-dumper.analyze :refer :all])
   (:import (java.nio ByteBuffer)))
 
+(def scrolling-nintendo-graphic
+  (byte-array
+    [
+     0xCE 0xED 0x66 0x66 0xCC 0x0D 0x00 0x0B 0x03 0x73 0x00 0x83 0x00 0x0C 0x00 0x0D
+     0x00 0x08 0x11 0x1F 0x88 0x89 0x00 0x0E 0xDC 0xCC 0x6E 0xE6 0xDD 0xDD 0xD9 0x99
+     0xBB 0xBB 0x67 0x63 0x6E 0x0E 0xEC 0xCC 0xDD 0xDC 0x99 0x9F 0xBB 0xB9 0x33 0x3E
+     ]))
 
 (defn prepare-test-data
   "Prepares test ROM data and returns it as byte[]"
   []
-  (let [test-rom-size 17
+  (let [test-rom-size (+ 17 (count scrolling-nintendo-graphic))
         byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
     (.put byte-buffer (.byteValue 0x12))                    ; rst$00
@@ -27,6 +34,7 @@
     (.put byte-buffer (.byteValue 0x13))                    ; code execution point (4 bytes)
     (.put byte-buffer (.byteValue 0x21))                    ; code execution point (4 bytes)
     (.put byte-buffer (.byteValue 0x70))                    ; code execution point (4 bytes)
+    (.put byte-buffer scrolling-nintendo-graphic 0 (count scrolling-nintendo-graphic))
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
