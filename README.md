@@ -1,6 +1,6 @@
 # gb-dumper [![Build Status](https://travis-ci.org/gernd/gb-dumper.svg?branch=master)](https://travis-ci.org/gernd/gb-dumper)
 
-FIXME: description
+Simple command line tool for displaying information about GB roms
 
 ## Installation
 
