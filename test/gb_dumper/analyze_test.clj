@@ -78,3 +78,10 @@
           (is-same-byte 0x13 (nth (get unpacked-rom-data :start-opcodes) 1))
           (is-same-byte 0x21 (nth (get unpacked-rom-data :start-opcodes) 2))
           (is-same-byte 0x70 (nth (get unpacked-rom-data :start-opcodes) 3))))))
+
+(deftest test-unpack-rom-data-start-scrolling-logo-correct
+  (testing "Checks that the scrolling logo is correctly read from the ROM"
+    (let [test-rom-data (prepare-test-data)
+          unpacked-rom-data (unpack-rom-data test-rom-data)]
+      (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
+          (is (= (seq scrolling-nintendo-graphic) (seq (get unpacked-rom-data :logo))))))))
