@@ -20,7 +20,6 @@
     (.get rom-data-buffer byte-arr)
     (vec byte-arr)))
 
-
 (defn unpack-rom-data
   "unpacks the gb rom data given as byte array"
   [rom-data]
