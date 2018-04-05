@@ -44,7 +44,7 @@
   [first-byte second-byte]
   (is (= (.byteValue first-byte) (.byteValue second-byte))))
 
-(deftest test-unpack-rom-data-restart-addresses-correct
+(deftest test-unpack-rom-data-restart-addresses
   (testing "Checks that the restart adresses are correctly read from the ROM"
     (let [test-rom-data (prepare-valid-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
@@ -58,7 +58,7 @@
           (is-same-byte 0x24 (get unpacked-rom-data :rst$30))
           (is-same-byte 0x99 (get unpacked-rom-data :rst$38))))))
 
-(deftest test-unpack-rom-data-interrupt-addresses-correct
+(deftest test-unpack-rom-data-interrupt-addresses
   (testing "Checks that the interrupt adresses are correctly read from the ROM"
     (let [test-rom-data (prepare-valid-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
@@ -69,7 +69,7 @@
           (is-same-byte 0x04 (get unpacked-rom-data :serial-transfer-completion-interrupt))
           (is-same-byte 0x05 (get unpacked-rom-data :high-to-low-interrupt))))))
 
-(deftest test-unpack-rom-data-start-opcodes-correct
+(deftest test-unpack-rom-data-start-opcodes
   (testing "Checks that the start opcodes are correctly read from the ROM"
     (let [test-rom-data (prepare-valid-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
@@ -79,9 +79,10 @@
           (is-same-byte 0x21 (nth (get unpacked-rom-data :start-opcodes) 2))
           (is-same-byte 0x70 (nth (get unpacked-rom-data :start-opcodes) 3))))))
 
-(deftest test-unpack-rom-data-start-scrolling-logo-correct
+(deftest test-unpack-rom-data-valid-scrolling-logo
   (testing "Checks that the scrolling logo is correctly read from the ROM"
     (let [test-rom-data (prepare-valid-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
-          (is (= (seq valid-scrolling-nintendo-graphic) (seq (get unpacked-rom-data :logo))))))))
+          (is (= (seq valid-scrolling-nintendo-graphic) (seq (get unpacked-rom-data :logo))))
+          (is (get unpacked-rom-data :logo-is-valid))))))
