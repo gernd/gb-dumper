@@ -11,8 +11,16 @@
      0xBB 0xBB 0x67 0x63 0x6E 0x0E 0xEC 0xCC 0xDD 0xDC 0x99 0x9F 0xBB 0xB9 0x33 0x3E
      ]))
 
+(def invalid-scrolling-nintendo-graphic
+  (byte-array
+    [
+     0xCE 0xED 0x66 0x66 0xCC 0x0D 0x00 0x0B 0x03 0x73 0x00 0x83 0x00 0x0C 0x00 0x0D
+     0x00 0xFF 0x11 0x1F 0x88 0x89 0x00 0x0E 0xDC 0xCC 0x6E 0xE6 0xDD 0xDD 0xD9 0x99
+     0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
+     ]))
+
 (defn prepare-valid-test-data
-  "Prepares test ROM data and returns it as byte[]"
+  "Prepares valid test ROM data and returns it as byte[]"
   []
   (let [test-rom-size (+ 17 (count valid-scrolling-nintendo-graphic))
         byte-buffer (ByteBuffer/allocate test-rom-size)
@@ -35,6 +43,34 @@
     (.put byte-buffer (.byteValue 0x21))                    ; code execution point (4 bytes)
     (.put byte-buffer (.byteValue 0x70))                    ; code execution point (4 bytes)
     (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
+    (.flip byte-buffer)
+    (.get byte-buffer buf)
+    buf))
+
+(defn prepare-invalid-test-data
+  "Prepares invalid test ROM data and returns it as byte[]"
+  []
+  (let [test-rom-size (+ 17 (count invalid-scrolling-nintendo-graphic))
+        byte-buffer (ByteBuffer/allocate test-rom-size)
+        buf (byte-array test-rom-size)]
+    (.put byte-buffer (.byteValue 0x12))                    ; rst$00
+    (.put byte-buffer (.byteValue 0x33))                    ; rst$08
+    (.put byte-buffer (.byteValue 0x00))                    ; rst$10
+    (.put byte-buffer (.byteValue 0x12))                    ; rst$18
+    (.put byte-buffer (.byteValue 0x13))                    ; rst$20
+    (.put byte-buffer (.byteValue 0x03))                    ; rst$28
+    (.put byte-buffer (.byteValue 0x24))                    ; rst$30
+    (.put byte-buffer (.byteValue 0x99))                    ; rst$38
+    (.put byte-buffer (.byteValue 0x01))                    ; vertical blank interrupt
+    (.put byte-buffer (.byteValue 0x02))                    ; lcdc state interrupt
+    (.put byte-buffer (.byteValue 0x03))                    ; timer overflow interrupt
+    (.put byte-buffer (.byteValue 0x04))                    ; serial transfer complete interrupt
+    (.put byte-buffer (.byteValue 0x05))                    ; high to low interrupt
+    (.put byte-buffer (.byteValue 0x12))                    ; code execution point (4 bytes)
+    (.put byte-buffer (.byteValue 0x13))                    ; code execution point (4 bytes)
+    (.put byte-buffer (.byteValue 0x21))                    ; code execution point (4 bytes)
+    (.put byte-buffer (.byteValue 0x70))                    ; code execution point (4 bytes)
+    (.put byte-buffer invalid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
@@ -80,9 +116,17 @@
           (is-same-byte 0x70 (nth (get unpacked-rom-data :start-opcodes) 3))))))
 
 (deftest test-unpack-rom-data-valid-scrolling-logo
-  (testing "Checks that the scrolling logo is correctly read from the ROM"
+  (testing "Checks that a valid scrolling logo is correctly read from the ROM and detected as valid"
     (let [test-rom-data (prepare-valid-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is (= (seq valid-scrolling-nintendo-graphic) (seq (get unpacked-rom-data :logo))))
           (is (get unpacked-rom-data :logo-is-valid))))))
+
+(deftest test-unpack-rom-data-invalid-scrolling-logo
+  (testing "Checks that a invalid scrolling logo is correctly read from the ROM and detected as invalid"
+    (let [test-rom-data (prepare-invalid-test-data)
+          unpacked-rom-data (unpack-rom-data test-rom-data)]
+      (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
+          (is (= (seq invalid-scrolling-nintendo-graphic) (seq (get unpacked-rom-data :logo))))
+          (is (not (get unpacked-rom-data :logo-is-valid)))))))
