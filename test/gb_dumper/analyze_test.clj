@@ -19,29 +19,35 @@
      0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
      ]))
 
+(defn add-reset-addresses-interrupts-start-opcodes
+  "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
+  [byte-buffer]
+  (.put byte-buffer (.byteValue 0x12))                      ; rst$00
+  (.put byte-buffer (.byteValue 0x33))                      ; rst$08
+  (.put byte-buffer (.byteValue 0x00))                      ; rst$10
+  (.put byte-buffer (.byteValue 0x12))                      ; rst$18
+  (.put byte-buffer (.byteValue 0x13))                      ; rst$20
+  (.put byte-buffer (.byteValue 0x03))                      ; rst$28
+  (.put byte-buffer (.byteValue 0x24))                      ; rst$30
+  (.put byte-buffer (.byteValue 0x99))                      ; rst$38
+  (.put byte-buffer (.byteValue 0x01))                      ; vertical blank interrupt
+  (.put byte-buffer (.byteValue 0x02))                      ; lcdc state interrupt
+  (.put byte-buffer (.byteValue 0x03))                      ; timer overflow interrupt
+  (.put byte-buffer (.byteValue 0x04))                      ; serial transfer complete interrupt
+  (.put byte-buffer (.byteValue 0x05))                      ; high to low interrupt
+  (.put byte-buffer (.byteValue 0x12))                      ; code execution point (4 bytes)
+  (.put byte-buffer (.byteValue 0x13))                      ; code execution point (4 bytes)
+  (.put byte-buffer (.byteValue 0x21))                      ; code execution point (4 bytes)
+  (.put byte-buffer (.byteValue 0x70)))                     ; code execution point (4 bytes)
+
+
 (defn prepare-valid-test-data
   "Prepares valid test ROM data and returns it as byte[]"
   []
   (let [test-rom-size (+ 17 (count valid-scrolling-nintendo-graphic))
         byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
-    (.put byte-buffer (.byteValue 0x12))                    ; rst$00
-    (.put byte-buffer (.byteValue 0x33))                    ; rst$08
-    (.put byte-buffer (.byteValue 0x00))                    ; rst$10
-    (.put byte-buffer (.byteValue 0x12))                    ; rst$18
-    (.put byte-buffer (.byteValue 0x13))                    ; rst$20
-    (.put byte-buffer (.byteValue 0x03))                    ; rst$28
-    (.put byte-buffer (.byteValue 0x24))                    ; rst$30
-    (.put byte-buffer (.byteValue 0x99))                    ; rst$38
-    (.put byte-buffer (.byteValue 0x01))                    ; vertical blank interrupt
-    (.put byte-buffer (.byteValue 0x02))                    ; lcdc state interrupt
-    (.put byte-buffer (.byteValue 0x03))                    ; timer overflow interrupt
-    (.put byte-buffer (.byteValue 0x04))                    ; serial transfer complete interrupt
-    (.put byte-buffer (.byteValue 0x05))                    ; high to low interrupt
-    (.put byte-buffer (.byteValue 0x12))                    ; code execution point (4 bytes)
-    (.put byte-buffer (.byteValue 0x13))                    ; code execution point (4 bytes)
-    (.put byte-buffer (.byteValue 0x21))                    ; code execution point (4 bytes)
-    (.put byte-buffer (.byteValue 0x70))                    ; code execution point (4 bytes)
+    (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
     (.flip byte-buffer)
     (.get byte-buffer buf)
@@ -53,23 +59,7 @@
   (let [test-rom-size (+ 17 (count invalid-scrolling-nintendo-graphic))
         byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
-    (.put byte-buffer (.byteValue 0x12))                    ; rst$00
-    (.put byte-buffer (.byteValue 0x33))                    ; rst$08
-    (.put byte-buffer (.byteValue 0x00))                    ; rst$10
-    (.put byte-buffer (.byteValue 0x12))                    ; rst$18
-    (.put byte-buffer (.byteValue 0x13))                    ; rst$20
-    (.put byte-buffer (.byteValue 0x03))                    ; rst$28
-    (.put byte-buffer (.byteValue 0x24))                    ; rst$30
-    (.put byte-buffer (.byteValue 0x99))                    ; rst$38
-    (.put byte-buffer (.byteValue 0x01))                    ; vertical blank interrupt
-    (.put byte-buffer (.byteValue 0x02))                    ; lcdc state interrupt
-    (.put byte-buffer (.byteValue 0x03))                    ; timer overflow interrupt
-    (.put byte-buffer (.byteValue 0x04))                    ; serial transfer complete interrupt
-    (.put byte-buffer (.byteValue 0x05))                    ; high to low interrupt
-    (.put byte-buffer (.byteValue 0x12))                    ; code execution point (4 bytes)
-    (.put byte-buffer (.byteValue 0x13))                    ; code execution point (4 bytes)
-    (.put byte-buffer (.byteValue 0x21))                    ; code execution point (4 bytes)
-    (.put byte-buffer (.byteValue 0x70))                    ; code execution point (4 bytes)
+    (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer invalid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
     (.flip byte-buffer)
     (.get byte-buffer buf)
