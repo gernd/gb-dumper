@@ -13,26 +13,27 @@
   [bytes]
   (apply str "0x" (for [byte bytes] (format "%02x" byte))))
 
+(defn unpack-bytes
+  "unpacks the given number of bytes from a ByteBuffer as vector of bytes"
+  [byte-buffer number-of-bytes]
+  (let [byte-arr (byte-array number-of-bytes)]
+    (.get byte-buffer byte-arr)
+    (vec byte-arr)))
+
 (defn unpack-start-opcodes
   "unpacks the start opcodes from the ROM given as ByteBuffer"
   [rom-data-buffer]
-  (let [byte-arr (byte-array 4)]
-    (.get rom-data-buffer byte-arr)
-    (vec byte-arr)))
+  (unpack-bytes rom-data-buffer 4))
 
 (defn unpack-logo-graphic
   "unpacks the start logo graphic from the ROM given as ByteBuffer"
   [rom-data-buffer]
-  (let [byte-arr (byte-array 48)]
-    (.get rom-data-buffer byte-arr)
-    (vec byte-arr)))
+  (unpack-bytes rom-data-buffer 48))
 
 (defn unpack-logo-restart-address
   "unpacks a restart address from the ROM given as ByteBuffer"
   [rom-data-buffer]
-  (let [byte-arr (byte-array 8)]
-    (.get rom-data-buffer byte-arr)
-    (vec byte-arr)))
+  (unpack-bytes rom-data-buffer 8))
 
 (defn unpack-rom-data
   "unpacks the gb rom data given as byte array"
