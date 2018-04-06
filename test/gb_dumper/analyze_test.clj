@@ -22,7 +22,7 @@
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
   [byte-buffer]
-  (.put byte-buffer (.byteValue 0x12))                      ; rst$00
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x12)))      ; rst$00
   (.put byte-buffer (.byteValue 0x33))                      ; rst$08
   (.put byte-buffer (.byteValue 0x00))                      ; rst$10
   (.put byte-buffer (.byteValue 0x12))                      ; rst$18
@@ -44,7 +44,7 @@
 (defn prepare-valid-test-data
   "Prepares valid test ROM data and returns it as byte[]"
   []
-  (let [test-rom-size (+ 17 (count valid-scrolling-nintendo-graphic))
+  (let [test-rom-size (+ 24 (count valid-scrolling-nintendo-graphic))
         byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
@@ -56,7 +56,7 @@
 (defn prepare-invalid-test-data
   "Prepares invalid test ROM data and returns it as byte[]"
   []
-  (let [test-rom-size (+ 17 (count invalid-scrolling-nintendo-graphic))
+  (let [test-rom-size (+ 24 (count invalid-scrolling-nintendo-graphic))
         byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
@@ -75,7 +75,8 @@
     (let [test-rom-data (prepare-valid-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
-          (is-same-byte 0x12 (get unpacked-rom-data :rst$00))
+          (is (= (seq [0x12 0x12 0x12 0x12 0x12 0x12 0x12 0x12])
+                 (seq (get unpacked-rom-data :rst$00))))
           (is-same-byte 0x33 (get unpacked-rom-data :rst$08))
           (is-same-byte 0x00 (get unpacked-rom-data :rst$10))
           (is-same-byte 0x12 (get unpacked-rom-data :rst$18))

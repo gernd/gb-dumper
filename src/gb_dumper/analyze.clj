@@ -27,6 +27,13 @@
     (.get rom-data-buffer byte-arr)
     (vec byte-arr)))
 
+(defn unpack-logo-restart-address
+  "unpacks a restart address from the ROM given as ByteBuffer"
+  [rom-data-buffer]
+  (let [byte-arr (byte-array 8)]
+    (.get rom-data-buffer byte-arr)
+    (vec byte-arr)))
+
 (defn unpack-rom-data
   "unpacks the gb rom data given as byte array"
   [rom-data]
@@ -35,7 +42,7 @@
     (.flip byte-buffer)                                     ; reset pointer for reading
     (let [
           ; restart addresses
-          rst$00 (.get byte-buffer)
+          rst$00 (unpack-logo-restart-address byte-buffer)
           rst$08 (.get byte-buffer)
           rst$10 (.get byte-buffer)
           rst$18 (.get byte-buffer)
