@@ -19,6 +19,8 @@
      0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
      ]))
 
+(def test-rom-size (+ 24 (count valid-scrolling-nintendo-graphic)))
+
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
   [byte-buffer]
@@ -44,8 +46,7 @@
 (defn prepare-valid-test-data
   "Prepares valid test ROM data and returns it as byte[]"
   []
-  (let [test-rom-size (+ 24 (count valid-scrolling-nintendo-graphic))
-        byte-buffer (ByteBuffer/allocate test-rom-size)
+  (let [byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
@@ -56,8 +57,7 @@
 (defn prepare-invalid-test-data
   "Prepares invalid test ROM data and returns it as byte[]"
   []
-  (let [test-rom-size (+ 24 (count invalid-scrolling-nintendo-graphic))
-        byte-buffer (ByteBuffer/allocate test-rom-size)
+  (let [byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer invalid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
