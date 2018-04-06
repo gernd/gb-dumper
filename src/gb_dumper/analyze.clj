@@ -43,7 +43,7 @@
     (let [
           ; restart addresses
           rst$00 (unpack-logo-restart-address byte-buffer)
-          rst$08 (.get byte-buffer)
+          rst$08 (unpack-logo-restart-address byte-buffer)
           rst$10 (.get byte-buffer)
           rst$18 (.get byte-buffer)
           rst$20 (.get byte-buffer)

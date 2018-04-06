@@ -19,13 +19,13 @@
      0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
      ]))
 
-(def test-rom-size (+ 24 (count valid-scrolling-nintendo-graphic)))
+(def test-rom-size (+ 31 (count valid-scrolling-nintendo-graphic)))
 
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
   [byte-buffer]
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x12)))      ; rst$00
-  (.put byte-buffer (.byteValue 0x33))                      ; rst$08
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x33)))      ; rst$08
   (.put byte-buffer (.byteValue 0x00))                      ; rst$10
   (.put byte-buffer (.byteValue 0x12))                      ; rst$18
   (.put byte-buffer (.byteValue 0x13))                      ; rst$20
@@ -77,7 +77,8 @@
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is (= (seq [0x12 0x12 0x12 0x12 0x12 0x12 0x12 0x12])
                  (seq (get unpacked-rom-data :rst$00))))
-          (is-same-byte 0x33 (get unpacked-rom-data :rst$08))
+          (is (= (seq [0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33])
+                 (seq (get unpacked-rom-data :rst$08))))
           (is-same-byte 0x00 (get unpacked-rom-data :rst$10))
           (is-same-byte 0x12 (get unpacked-rom-data :rst$18))
           (is-same-byte 0x13 (get unpacked-rom-data :rst$20))
