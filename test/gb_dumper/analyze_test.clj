@@ -19,19 +19,19 @@
      0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
      ]))
 
-(def test-rom-size (+ 31 (count valid-scrolling-nintendo-graphic)))
+(def test-rom-size (+ 73 (count valid-scrolling-nintendo-graphic)))
 
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
   [byte-buffer]
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x12)))      ; rst$00
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x33)))      ; rst$08
-  (.put byte-buffer (.byteValue 0x00))                      ; rst$10
-  (.put byte-buffer (.byteValue 0x12))                      ; rst$18
-  (.put byte-buffer (.byteValue 0x13))                      ; rst$20
-  (.put byte-buffer (.byteValue 0x03))                      ; rst$28
-  (.put byte-buffer (.byteValue 0x24))                      ; rst$30
-  (.put byte-buffer (.byteValue 0x99))                      ; rst$38
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x00)))      ; rst$10
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x12)))      ; rst$18
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x13)))      ; rst$20
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x03)))      ; rst$28
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x24)))      ; rst$30
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x20)))      ; rst$38
   (.put byte-buffer (.byteValue 0x01))                      ; vertical blank interrupt
   (.put byte-buffer (.byteValue 0x02))                      ; lcdc state interrupt
   (.put byte-buffer (.byteValue 0x03))                      ; timer overflow interrupt
@@ -79,12 +79,18 @@
                  (seq (get unpacked-rom-data :rst$00))))
           (is (= (seq [0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33])
                  (seq (get unpacked-rom-data :rst$08))))
-          (is-same-byte 0x00 (get unpacked-rom-data :rst$10))
-          (is-same-byte 0x12 (get unpacked-rom-data :rst$18))
-          (is-same-byte 0x13 (get unpacked-rom-data :rst$20))
-          (is-same-byte 0x03 (get unpacked-rom-data :rst$28))
-          (is-same-byte 0x24 (get unpacked-rom-data :rst$30))
-          (is-same-byte 0x99 (get unpacked-rom-data :rst$38))))))
+          (is (= (seq [0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00])
+                 (seq (get unpacked-rom-data :rst$10))))
+          (is (= (seq [0x12 0x12 0x12 0x12 0x12 0x12 0x12 0x12])
+                 (seq (get unpacked-rom-data :rst$18))))
+          (is (= (seq [0x13 0x13 0x13 0x13 0x13 0x13 0x13 0x13])
+                 (seq (get unpacked-rom-data :rst$20))))
+          (is (= (seq [0x03 0x03 0x03 0x03 0x03 0x03 0x03 0x03])
+                 (seq (get unpacked-rom-data :rst$28))))
+          (is (= (seq [0x24 0x24 0x24 0x24 0x24 0x24 0x24 0x24])
+                 (seq (get unpacked-rom-data :rst$30))))
+          (is (= (seq [0x20 0x20 0x20 0x20 0x20 0x20 0x20 0x20])
+                 (seq (get unpacked-rom-data :rst$38))))))))
 
 (deftest test-unpack-rom-data-interrupt-addresses
   (testing "Checks that the interrupt adresses are correctly read from the ROM"

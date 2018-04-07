@@ -45,12 +45,12 @@
           ; restart addresses
           rst$00 (unpack-logo-restart-address byte-buffer)
           rst$08 (unpack-logo-restart-address byte-buffer)
-          rst$10 (.get byte-buffer)
-          rst$18 (.get byte-buffer)
-          rst$20 (.get byte-buffer)
-          rst$28 (.get byte-buffer)
-          rst$30 (.get byte-buffer)
-          rst$38 (.get byte-buffer)
+          rst$10 (unpack-logo-restart-address byte-buffer)
+          rst$18 (unpack-logo-restart-address byte-buffer)
+          rst$20 (unpack-logo-restart-address byte-buffer)
+          rst$28 (unpack-logo-restart-address byte-buffer)
+          rst$30 (unpack-logo-restart-address byte-buffer)
+          rst$38 (unpack-logo-restart-address byte-buffer)
           ; interrupt addresses
           vertical-blank-interrupt (.get byte-buffer)
           lcdc-status-interrupt (.get byte-buffer)
