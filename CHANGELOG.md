@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Changed
 
+### Removed
+Unused docs
+
 ## [0.0.1] - 2018-04-09
 ### Added
 First version parsing bytes up to the scrolling start logo.
