@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Changed
 
-## [0.1.0] - 2018-04-09
+## [0.0.1] - 2018-04-09
 ### Added
 First version parsing bytes up to the scrolling start logo.
 
-[Unreleased]: https://github.com/gernd/gb-dumper/compare/0.1.0...master
-[0.1.0]: https://github.com/gernd/gb-dumper/compare/0.1.0...0.1.1
+[Unreleased]: https://github.com/gernd/gb-dumper/compare/v0.0.1...master
+[0.0.1]: https://github.com/gernd/gb-dumper/compare/ca6130150d7728ef7190c84a013ebc45b8e383e1...v0.0.1
