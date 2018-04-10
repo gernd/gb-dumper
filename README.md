@@ -2,16 +2,13 @@
 
 Simple command line tool for displaying information about GB roms
 
-## Installation
-
-Download from http://example.com/FIXME.
+[Changelog](CHANGELOG.md)
 
 ## Usage
 
 The only parameter is the gb ROM file to be dumped.
 
-    $ java -jar gb-dumper-0.1.0-standalone.jar [args]
-
+    $ lein run [path-to-rom-file]
 
 ## License
 
