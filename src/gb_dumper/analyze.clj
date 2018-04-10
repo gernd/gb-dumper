@@ -30,8 +30,8 @@
   [rom-data-buffer]
   (unpack-bytes rom-data-buffer 48))
 
-(defn unpack-logo-restart-address
-  "unpacks a restart address from the ROM given as ByteBuffer"
+(defn unpack-eight-bytes
+  "unpacks eight bytes from the ROM given as ByteBuffer"
   [rom-data-buffer]
   (unpack-bytes rom-data-buffer 8))
 
@@ -43,14 +43,14 @@
     (.flip byte-buffer)                                     ; reset pointer for reading
     (let [
           ; restart addresses
-          rst$00 (unpack-logo-restart-address byte-buffer)
-          rst$08 (unpack-logo-restart-address byte-buffer)
-          rst$10 (unpack-logo-restart-address byte-buffer)
-          rst$18 (unpack-logo-restart-address byte-buffer)
-          rst$20 (unpack-logo-restart-address byte-buffer)
-          rst$28 (unpack-logo-restart-address byte-buffer)
-          rst$30 (unpack-logo-restart-address byte-buffer)
-          rst$38 (unpack-logo-restart-address byte-buffer)
+          rst$00 (unpack-eight-bytes byte-buffer)
+          rst$08 (unpack-eight-bytes byte-buffer)
+          rst$10 (unpack-eight-bytes byte-buffer)
+          rst$18 (unpack-eight-bytes byte-buffer)
+          rst$20 (unpack-eight-bytes byte-buffer)
+          rst$28 (unpack-eight-bytes byte-buffer)
+          rst$30 (unpack-eight-bytes byte-buffer)
+          rst$38 (unpack-eight-bytes byte-buffer)
           ; interrupt addresses
           vertical-blank-interrupt (.get byte-buffer)
           lcdc-status-interrupt (.get byte-buffer)
