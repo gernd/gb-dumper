@@ -52,11 +52,11 @@
           rst$30 (unpack-eight-bytes byte-buffer)
           rst$38 (unpack-eight-bytes byte-buffer)
           ; interrupt addresses
-          vertical-blank-interrupt (.get byte-buffer)
-          lcdc-status-interrupt (.get byte-buffer)
-          timer-overflow-interrupt (.get byte-buffer)
-          serial-transfer-completion-interrupt (.get byte-buffer)
-          high-to-low-interrupt (.get byte-buffer)
+          vertical-blank-interrupt (unpack-eight-bytes byte-buffer)
+          lcdc-status-interrupt (unpack-eight-bytes byte-buffer)
+          timer-overflow-interrupt (unpack-eight-bytes byte-buffer)
+          serial-transfer-completion-interrupt (unpack-eight-bytes byte-buffer)
+          high-to-low-interrupt (unpack-eight-bytes byte-buffer)
           ; code execution start opcodes
           code-execution-start-opcodes (unpack-start-opcodes byte-buffer)
           ; scrolling start logo

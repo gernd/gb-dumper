@@ -9,6 +9,7 @@ Unused sections in Readme
 
 ### Fixed
 Usage description
+Unpacking of interrupt addresses
 
 ## [0.0.1] - 2018-04-09
 ### Added

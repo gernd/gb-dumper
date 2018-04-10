@@ -19,7 +19,7 @@
      0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
      ]))
 
-(def test-rom-size (+ 73 (count valid-scrolling-nintendo-graphic)))
+(def test-rom-size (+ 108 (count valid-scrolling-nintendo-graphic)))
 
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
@@ -32,11 +32,11 @@
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x03)))      ; rst$28
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x24)))      ; rst$30
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x99)))      ; rst$38
-  (.put byte-buffer (.byteValue 0x01))                      ; vertical blank interrupt
-  (.put byte-buffer (.byteValue 0x02))                      ; lcdc state interrupt
-  (.put byte-buffer (.byteValue 0x03))                      ; timer overflow interrupt
-  (.put byte-buffer (.byteValue 0x04))                      ; serial transfer complete interrupt
-  (.put byte-buffer (.byteValue 0x05))                      ; high to low interrupt
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x01)))      ; vertical blank interrupt
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x02)))      ; lcdc state interrupt
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x03)))      ; timer overflow interrupt
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x04)))      ; serial transfer complete interrupt
+  (dotimes [n 8] (.put byte-buffer (.byteValue 0x05)))      ; high to low interrupt
   (.put byte-buffer (.byteValue 0x12))                      ; code execution point (4 bytes)
   (.put byte-buffer (.byteValue 0x13))                      ; code execution point (4 bytes)
   (.put byte-buffer (.byteValue 0x21))                      ; code execution point (4 bytes)
@@ -95,11 +95,11 @@
     (let [test-rom-data (prepare-valid-test-data)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
-          (is-same-byte 0x01 (get unpacked-rom-data :vertical-blank-interrupt))
-          (is-same-byte 0x02 (get unpacked-rom-data :lcdc-status-interrupt))
-          (is-same-byte 0x03 (get unpacked-rom-data :timer-overflow-interrupt))
-          (is-same-byte 0x04 (get unpacked-rom-data :serial-transfer-completion-interrupt))
-          (is-same-byte 0x05 (get unpacked-rom-data :high-to-low-interrupt))))))
+          (is-same-byte-vector [0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01] (get unpacked-rom-data :vertical-blank-interrupt))
+          (is-same-byte-vector [0x02 0x02 0x02 0x02 0x02 0x02 0x02 0x02] (get unpacked-rom-data :lcdc-status-interrupt))
+          (is-same-byte-vector [0x03 0x03 0x03 0x03 0x03 0x03 0x03 0x03] (get unpacked-rom-data :timer-overflow-interrupt))
+          (is-same-byte-vector [0x04 0x04 0x04 0x04 0x04 0x04 0x04 0x04] (get unpacked-rom-data :serial-transfer-completion-interrupt))
+          (is-same-byte-vector [0x05 0x05 0x05 0x05 0x05 0x05 0x05 0x05] (get unpacked-rom-data :high-to-low-interrupt))))))
 
 (deftest test-unpack-rom-data-start-opcodes
   (testing "Checks that the start opcodes are correctly read from the ROM"
