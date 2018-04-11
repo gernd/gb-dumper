@@ -1,6 +1,6 @@
 (defproject gb-dumper "0.1.0-SNAPSHOT"
   :description "A simple GB ROM dumper for the command line"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/gernd/gb-dumper"
   :license {:name "MIT License"
             :url "LICENSE.md"}
   :dependencies [[org.clojure/clojure "1.8.0"]]
