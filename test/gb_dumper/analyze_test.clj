@@ -19,7 +19,9 @@
      0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
      ]))
 
-(def test-rom-size (+ 260 (count valid-scrolling-nintendo-graphic)))
+(def rom-name-16-bytes "name of the ROM!")
+
+(def test-rom-size (+ 276 (count valid-scrolling-nintendo-graphic)))
 
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
@@ -50,6 +52,7 @@
         buf (byte-array test-rom-size)]
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
+    (.put byte-buffer (.getBytes rom-name-16-bytes) 0 16)
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
@@ -61,6 +64,7 @@
         buf (byte-array test-rom-size)]
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer invalid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
+    (.put byte-buffer (.getBytes rom-name-16-bytes) 0 16)
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))

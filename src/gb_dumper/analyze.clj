@@ -1,5 +1,7 @@
 (ns gb-dumper.analyze
-  (:import (java.nio ByteBuffer)))
+  (:import (java.nio ByteBuffer)
+           (java.nio.charset Charset)))
+
 (def expected-logo-graphic
   (byte-array
     [
@@ -18,7 +20,7 @@
   [byte-buffer number-of-bytes]
   (let [byte-arr (byte-array number-of-bytes)]
     (.get byte-buffer byte-arr)
-    (vec byte-arr)))
+    byte-arr))
 
 (defn unpack-start-opcodes
   "unpacks the start opcodes from the ROM given as ByteBuffer"
@@ -34,6 +36,12 @@
   "unpacks eight bytes from the ROM given as ByteBuffer"
   [rom-data-buffer]
   (unpack-bytes rom-data-buffer 8))
+
+(defn unpack-name
+  "unpacks the name for the ROM from the given ByteBuffer"
+  [rom-data-buffer]
+  (let [byte-array (unpack-bytes rom-data-buffer 16)]
+    (new String (bytes byte-array) (Charset/forName "US-ASCII"))))
 
 (defn unpack-rom-data
   "unpacks the gb rom data given as byte array"
@@ -63,6 +71,8 @@
           code-execution-start-opcodes (unpack-start-opcodes byte-buffer)
           ; scrolling start logo
           start-logo (unpack-logo-graphic byte-buffer)
+          ; name of the ROM
+          name (unpack-name byte-buffer)
           ]
       {
        :rst$00                               rst$00
@@ -81,4 +91,5 @@
        :start-opcodes                        code-execution-start-opcodes
        :logo                                 start-logo
        :logo-is-valid                        (= (seq expected-logo-graphic) (seq start-logo))
+       :name                                 name
        })))
