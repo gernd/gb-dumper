@@ -21,6 +21,8 @@
 
 (def rom-name-16-bytes "name of the ROM!")
 
+(def rom-name-less-than-16-bytes "RPG")
+
 (def test-rom-size (+ 276 (count valid-scrolling-nintendo-graphic)))
 
 (defn add-reset-addresses-interrupts-start-opcodes
@@ -45,7 +47,7 @@
   (.put byte-buffer (.byteValue 0x21))                      ; code execution point (4 bytes)
   (.put byte-buffer (.byteValue 0x70)))                     ; code execution point (4 bytes)
 
-(defn prepare-valid-test-data
+(defn prepare-valid-test-data-rom-name-16-bytes
   "Prepares valid test ROM data and returns it as byte[]"
   []
   (let [byte-buffer (ByteBuffer/allocate test-rom-size)
@@ -53,6 +55,20 @@
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
     (.put byte-buffer (.getBytes rom-name-16-bytes) 0 16)
+    (.flip byte-buffer)
+    (.get byte-buffer buf)
+    buf))
+
+(defn prepare-valid-test-data-rom-name-less-than-16-bytes
+  "Prepares valid test ROM data and returns it as byte[]"
+  []
+  (let [byte-buffer (ByteBuffer/allocate test-rom-size)
+        buf (byte-array test-rom-size)
+        number-of-padding-bytes (- 16 (count rom-name-less-than-16-bytes))]
+    (add-reset-addresses-interrupts-start-opcodes byte-buffer)
+    (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
+    (.put byte-buffer (.getBytes rom-name-less-than-16-bytes) 0 (count rom-name-less-than-16-bytes))
+    (dotimes [n number-of-padding-bytes] (.put byte-buffer (.byteValue 0x00)))
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
@@ -82,7 +98,7 @@
 
 (deftest test-unpack-rom-data-restart-addresses
   (testing "Checks that the restart adresses are correctly read from the ROM"
-    (let [test-rom-data (prepare-valid-test-data)
+    (let [test-rom-data (prepare-valid-test-data-rom-name-16-bytes)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is-same-byte-vector [0x12 0x12 0x12 0x12 0x12 0x12 0x12 0x12] (get unpacked-rom-data :rst$00))
@@ -96,7 +112,7 @@
 
 (deftest test-unpack-rom-data-interrupt-addresses
   (testing "Checks that the interrupt adresses are correctly read from the ROM"
-    (let [test-rom-data (prepare-valid-test-data)
+    (let [test-rom-data (prepare-valid-test-data-rom-name-16-bytes)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is-same-byte-vector [0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01] (get unpacked-rom-data :vertical-blank-interrupt))
@@ -107,7 +123,7 @@
 
 (deftest test-unpack-rom-data-start-opcodes
   (testing "Checks that the start opcodes are correctly read from the ROM"
-    (let [test-rom-data (prepare-valid-test-data)
+    (let [test-rom-data (prepare-valid-test-data-rom-name-16-bytes)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is-same-byte 0x12 (nth (get unpacked-rom-data :start-opcodes) 0))
@@ -117,7 +133,7 @@
 
 (deftest test-unpack-rom-data-valid-scrolling-logo
   (testing "Checks that a valid scrolling logo is correctly read from the ROM and detected as valid"
-    (let [test-rom-data (prepare-valid-test-data)
+    (let [test-rom-data (prepare-valid-test-data-rom-name-16-bytes)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is (= (seq valid-scrolling-nintendo-graphic) (seq (get unpacked-rom-data :logo))))
@@ -133,7 +149,14 @@
 
 (deftest test-unpack-rom-data-name-with-16-bytes
   (testing "Checks that a name of 16 bytes is correctly read from the ROM"
-    (let [test-rom-data (prepare-valid-test-data)
+    (let [test-rom-data (prepare-valid-test-data-rom-name-16-bytes)
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is (= rom-name-16-bytes (get unpacked-rom-data :name)))))))
+
+(deftest test-unpack-rom-data-name-with-less-than-16-bytes
+  (testing "Checks that a name of less than 16 bytes is correctly read from the ROM"
+    (let [test-rom-data (prepare-valid-test-data-rom-name-less-than-16-bytes)
+          unpacked-rom-data (unpack-rom-data test-rom-data)]
+      (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
+          (is (= rom-name-less-than-16-bytes (get unpacked-rom-data :name)))))))

@@ -40,8 +40,9 @@
 (defn unpack-name
   "unpacks the name for the ROM from the given ByteBuffer"
   [rom-data-buffer]
-  (let [byte-array (unpack-bytes rom-data-buffer 16)]
-    (new String (bytes byte-array) (Charset/forName "US-ASCII"))))
+  (let [name-bytes (unpack-bytes rom-data-buffer 16)
+        name-without-zero-bytes (byte-array (filter #(not (= % 0x00)) (vec name-bytes)))]
+    (new String (bytes name-without-zero-bytes) (Charset/forName "US-ASCII"))))
 
 (defn unpack-rom-data
   "unpacks the gb rom data given as byte array"
