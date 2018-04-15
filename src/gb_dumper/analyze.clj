@@ -57,6 +57,8 @@
           timer-overflow-interrupt (unpack-eight-bytes byte-buffer)
           serial-transfer-completion-interrupt (unpack-eight-bytes byte-buffer)
           high-to-low-interrupt (unpack-eight-bytes byte-buffer)
+          ; code execution start opcodes start at 0x100, skip to there
+          unused (.get byte-buffer (byte-array 152))
           ; code execution start opcodes
           code-execution-start-opcodes (unpack-start-opcodes byte-buffer)
           ; scrolling start logo

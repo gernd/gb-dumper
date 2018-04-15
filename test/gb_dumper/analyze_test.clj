@@ -19,7 +19,7 @@
      0xBB 0xBB 0x67 0x63 0xDD 0x0E 0xEC 0xCC 0xEE 0xDC 0x99 0x01 0xBB 0xB9 0x33 0x3E
      ]))
 
-(def test-rom-size (+ 108 (count valid-scrolling-nintendo-graphic)))
+(def test-rom-size (+ 260 (count valid-scrolling-nintendo-graphic)))
 
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
@@ -37,11 +37,11 @@
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x03)))      ; timer overflow interrupt
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x04)))      ; serial transfer complete interrupt
   (dotimes [n 8] (.put byte-buffer (.byteValue 0x05)))      ; high to low interrupt
+  (dotimes [n 152] (.put byte-buffer (.byteValue 0x05)))    ; space up to 0x100
   (.put byte-buffer (.byteValue 0x12))                      ; code execution point (4 bytes)
   (.put byte-buffer (.byteValue 0x13))                      ; code execution point (4 bytes)
   (.put byte-buffer (.byteValue 0x21))                      ; code execution point (4 bytes)
   (.put byte-buffer (.byteValue 0x70)))                     ; code execution point (4 bytes)
-
 
 (defn prepare-valid-test-data
   "Prepares valid test ROM data and returns it as byte[]"
