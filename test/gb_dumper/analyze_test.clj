@@ -130,3 +130,10 @@
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is (= (seq invalid-scrolling-nintendo-graphic) (seq (get unpacked-rom-data :logo))))
           (is (not (get unpacked-rom-data :logo-is-valid)))))))
+
+(deftest test-unpack-rom-data-name-with-16-bytes
+  (testing "Checks that a name of 16 bytes is correctly read from the ROM"
+    (let [test-rom-data (prepare-valid-test-data)
+          unpacked-rom-data (unpack-rom-data test-rom-data)]
+      (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
+          (is (= rom-name-16-bytes (get unpacked-rom-data :name)))))))
