@@ -74,6 +74,8 @@
           start-logo (unpack-logo-graphic byte-buffer)
           ; name of the ROM
           name (unpack-name byte-buffer)
+          ; flag indicating whether this ROM is a GB color ROM
+          is-gb-color-rom (= (.byteValue 0x80) (.get byte-buffer))
           ]
       {
        :rst$00                               rst$00
@@ -93,4 +95,5 @@
        :logo                                 start-logo
        :logo-is-valid                        (= (seq expected-logo-graphic) (seq start-logo))
        :name                                 name
+       :is-gb-color-rom                      is-gb-color-rom
        })))

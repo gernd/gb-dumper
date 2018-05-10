@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Added
 Parsing of ROM name
+Parsing of GB color ROM indication
 ### Fixed
 Skipping region between interrupt addresses and start opcodes
 

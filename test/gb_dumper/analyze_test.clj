@@ -23,7 +23,7 @@
 
 (def rom-name-less-than-16-bytes "RPG")
 
-(def test-rom-size (+ 276 (count valid-scrolling-nintendo-graphic)))
+(def test-rom-size (+ 277 (count valid-scrolling-nintendo-graphic)))
 
 (defn add-reset-addresses-interrupts-start-opcodes
   "Adds reset addresses, interrupts and start opcodes to the given byte buffer"
@@ -48,13 +48,40 @@
   (.put byte-buffer (.byteValue 0x70)))                     ; code execution point (4 bytes)
 
 (defn prepare-valid-test-data-rom-name-16-bytes
-  "Prepares valid test ROM data and returns it as byte[]"
+  "Prepares valid test ROM data with a name of exactly 16 bytes and returns it as byte[]"
   []
   (let [byte-buffer (ByteBuffer/allocate test-rom-size)
         buf (byte-array test-rom-size)]
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
     (.put byte-buffer (.getBytes rom-name-16-bytes) 0 16)
+    (.put byte-buffer (.byteValue 0x80))
+    (.flip byte-buffer)
+    (.get byte-buffer buf)
+    buf))
+
+(defn prepare-valid-test-data-is-gb-color-rom
+  "Prepares valid test ROM data indicating that it is a GB color ROM and returns it as byte[]"
+  []
+  (let [byte-buffer (ByteBuffer/allocate test-rom-size)
+        buf (byte-array test-rom-size)]
+    (add-reset-addresses-interrupts-start-opcodes byte-buffer)
+    (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
+    (.put byte-buffer (.getBytes rom-name-16-bytes) 0 16)
+    (.put byte-buffer (.byteValue 0x80))
+    (.flip byte-buffer)
+    (.get byte-buffer buf)
+    buf))
+
+(defn prepare-valid-test-data-is-not-gb-color-rom
+  "Prepares valid test ROM data indicating that it is not a GB color ROM and returns it as byte[]"
+  []
+  (let [byte-buffer (ByteBuffer/allocate test-rom-size)
+        buf (byte-array test-rom-size)]
+    (add-reset-addresses-interrupts-start-opcodes byte-buffer)
+    (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
+    (.put byte-buffer (.getBytes rom-name-16-bytes) 0 16)
+    (.put byte-buffer (.byteValue 0x34))
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
@@ -69,6 +96,7 @@
     (.put byte-buffer valid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
     (.put byte-buffer (.getBytes rom-name-less-than-16-bytes) 0 (count rom-name-less-than-16-bytes))
     (dotimes [n number-of-padding-bytes] (.put byte-buffer (.byteValue 0x00)))
+    (.put byte-buffer (.byteValue 0x80))
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
@@ -81,6 +109,7 @@
     (add-reset-addresses-interrupts-start-opcodes byte-buffer)
     (.put byte-buffer invalid-scrolling-nintendo-graphic 0 (count valid-scrolling-nintendo-graphic))
     (.put byte-buffer (.getBytes rom-name-16-bytes) 0 16)
+    (.put byte-buffer (.byteValue 0x80))
     (.flip byte-buffer)
     (.get byte-buffer buf)
     buf))
@@ -160,3 +189,17 @@
           unpacked-rom-data (unpack-rom-data test-rom-data)]
       (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
           (is (= rom-name-less-than-16-bytes (get unpacked-rom-data :name)))))))
+
+(deftest test-unpack-rom-data-is-gb-color-rom
+  (testing "Checks that a GB color ROM is correctly parsed"
+    (let [test-rom-data (prepare-valid-test-data-is-gb-color-rom)
+          unpacked-rom-data (unpack-rom-data test-rom-data)]
+      (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
+          (is (get unpacked-rom-data :is-gb-color-rom))))))
+
+(deftest test-unpack-rom-data-is-not-gb-color-rom
+  (testing "Checks that a non GB color ROM is correctly parsed"
+    (let [test-rom-data (prepare-valid-test-data-is-not-gb-color-rom)
+          unpacked-rom-data (unpack-rom-data test-rom-data)]
+      (do (println "Test ROM data is" (to-hex-string test-rom-data) " unpacked ROM data is " unpacked-rom-data)
+          (is not (get unpacked-rom-data :is-gb-color-rom))))))
