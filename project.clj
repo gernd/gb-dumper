@@ -1,4 +1,4 @@
-(defproject gb-dumper "0.1.0-SNAPSHOT"
+(defproject gb-dumper "0.2.0-SNAPSHOT"
   :description "A simple GB ROM dumper for the command line"
   :url "https://github.com/gernd/gb-dumper"
   :license {:name "MIT License"
